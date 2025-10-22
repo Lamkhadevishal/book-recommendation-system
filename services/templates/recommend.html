@@ -1,0 +1,484 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Book Recommendations</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #6366f1;
+            --secondary-color: #f59e0b;
+            --dark-bg: #0f172a;
+            --card-bg: #1e293b;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: linear-gradient(135deg, var(--dark-bg) 0%, #1a2332 100%);
+            color: #f1f5f9;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            min-height: 100vh;
+        }
+
+        header {
+            background: rgba(15, 23, 42, 0.95);
+            backdrop-filter: blur(10px);
+            border-bottom: 2px solid var(--primary-color);
+            padding: 1.5rem 0;
+            margin-bottom: 3rem;
+        }
+
+        .navbar-brand {
+            font-size: 1.8rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .search-container {
+            max-width: 500px;
+            margin: 0 auto;
+            margin-bottom: 2rem;
+        }
+
+        .search-container input {
+            background: var(--card-bg);
+            border: 2px solid var(--primary-color);
+            color: #f1f5f9;
+            border-radius: 50px;
+            padding: 0.75rem 1.5rem;
+            transition: all 0.3s ease;
+        }
+
+        .search-container input:focus {
+            background: var(--card-bg);
+            border-color: var(--secondary-color);
+            box-shadow: 0 0 20px rgba(245, 158, 11, 0.3);
+            color: #f1f5f9;
+        }
+
+        .search-container input::placeholder {
+            color: #94a3b8;
+        }
+
+        .filter-section {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .filter-btn {
+            background: var(--card-bg);
+            border: 2px solid #475569;
+            color: #f1f5f9;
+            padding: 0.5rem 1.2rem;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+
+        .filter-btn:hover,
+        .filter-btn.active {
+            background: var(--primary-color);
+            border-color: var(--primary-color);
+            color: white;
+        }
+
+        .books-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 2rem;
+            padding: 0 1rem;
+            margin-bottom: 3rem;
+        }
+
+        .book-card {
+            background: var(--card-bg);
+            border-radius: 12px;
+            overflow: hidden;
+            transition: all 0.3s ease;
+            border: 1px solid #334155;
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+            cursor: pointer;
+        }
+
+        .book-card:hover {
+            transform: translateY(-10px);
+            border-color: var(--primary-color);
+            box-shadow: 0 20px 40px rgba(99, 102, 241, 0.2);
+        }
+
+        .book-cover {
+            width: 100%;
+            height: 300px;
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 4rem;
+            color: rgba(255, 255, 255, 0.3);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .book-cover::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(45deg, transparent 30%, rgba(255, 255, 255, 0.1) 50%, transparent 70%);
+            animation: shine 3s infinite;
+        }
+
+        @keyframes shine {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(100%); }
+        }
+
+        .book-info {
+            padding: 1.5rem;
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .book-title {
+            font-size: 1.1rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            color: #f1f5f9;
+            line-height: 1.4;
+        }
+
+        .book-author {
+            color: #cbd5e1;
+            font-size: 0.9rem;
+            margin-bottom: 0.75rem;
+        }
+
+        .book-rating {
+            display: flex;
+            gap: 0.25rem;
+            margin-bottom: 1rem;
+            align-items: center;
+        }
+
+        .book-rating .stars {
+            color: var(--secondary-color);
+        }
+
+        .book-rating .rating-text {
+            color: #94a3b8;
+            font-size: 0.85rem;
+            margin-left: 0.5rem;
+        }
+
+        .book-description {
+            color: #cbd5e1;
+            font-size: 0.85rem;
+            margin-bottom: 1rem;
+            flex-grow: 1;
+            line-height: 1.5;
+        }
+
+        .book-genre {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+            margin-bottom: 1rem;
+        }
+
+        .genre-tag {
+            background: rgba(99, 102, 241, 0.2);
+            color: #a5f3fc;
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            border: 1px solid rgba(99, 102, 241, 0.4);
+        }
+
+        .book-actions {
+            display: flex;
+            gap: 0.75rem;
+        }
+
+        .btn-custom {
+            flex: 1;
+            padding: 0.6rem;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 0.9rem;
+        }
+
+        .btn-primary-custom {
+            background: var(--primary-color);
+            color: white;
+        }
+
+        .btn-primary-custom:hover {
+            background: #4f46e5;
+            transform: scale(1.05);
+        }
+
+        .btn-secondary-custom {
+            background: transparent;
+            border: 2px solid var(--primary-color);
+            color: var(--primary-color);
+        }
+
+        .btn-secondary-custom:hover {
+            background: var(--primary-color);
+            color: white;
+        }
+
+        footer {
+            text-align: center;
+            padding: 2rem;
+            color: #94a3b8;
+            border-top: 1px solid #334155;
+            margin-top: 3rem;
+        }
+
+        @media (max-width: 768px) {
+            .books-grid {
+                grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+                gap: 1.5rem;
+            }
+
+            .filter-section {
+                gap: 0.5rem;
+            }
+
+            .search-container {
+                max-width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <header>
+        <nav class="navbar navbar-expand-lg">
+            <div class="container">
+                <div class="navbar-brand">
+                    <i class="fas fa-book"></i> BookHub
+                </div>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarNav">
+                    <ul class="navbar-nav ms-auto">
+                        <li class="nav-item"><a class="nav-link" href="#" style="color: #f1f5f9;">Home</a></li>
+                        <li class="nav-item"><a class="nav-link" href="#" style="color: #f1f5f9;">My Shelf</a></li>
+                        <li class="nav-item"><a class="nav-link" href="#" style="color: #f1f5f9;">Reviews</a></li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <!-- Main Content -->
+    <main class="container">
+        <!-- Hero Section -->
+        <div class="text-center mb-4">
+            <h1 style="font-size: 2.5rem; font-weight: 800; margin-bottom: 0.5rem;">Discover Your Next Read</h1>
+            <p style="color: #cbd5e1; font-size: 1.1rem;">Explore thousands of book recommendations curated just for you</p>
+        </div>
+
+        <!-- Search Bar -->
+        <div class="search-container">
+            <div class="input-group">
+                <input type="text" class="form-control" placeholder="Search by title, author, or genre...">
+                <span class="input-group-text" style="background: var(--primary-color); border: none; cursor: pointer;">
+                    <i class="fas fa-search" style="color: white;"></i>
+                </span>
+            </div>
+        </div>
+
+        <!-- Filter Buttons -->
+        <div class="filter-section">
+            <button class="filter-btn active">All Books</button>
+            <button class="filter-btn">Fiction</button>
+            <button class="filter-btn">Mystery</button>
+            <button class="filter-btn">Science Fiction</button>
+            <button class="filter-btn">Fantasy</button>
+            <button class="filter-btn">Self-Help</button>
+            <button class="filter-btn">Biography</button>
+        </div>
+
+        <!-- Books Grid -->
+        <div class="books-grid">
+            <!-- Book Card 1 -->
+            <div class="book-card">
+                <div class="book-cover">
+                    <i class="fas fa-book-open"></i>
+                </div>
+                <div class="book-info">
+                    <h3 class="book-title">The Midnight Library</h3>
+                    <p class="book-author">by Matt Haig</p>
+                    <div class="book-rating">
+                        <span class="stars">★★★★★</span>
+                        <span class="rating-text">(4.8)</span>
+                    </div>
+                    <div class="book-genre">
+                        <span class="genre-tag">Fiction</span>
+                        <span class="genre-tag">Fantasy</span>
+                    </div>
+                    <p class="book-description">A dazzling novel about all the choices that go into a life well lived.</p>
+                    <div class="book-actions">
+                        <button class="btn-custom btn-primary-custom">Read Now</button>
+                        <button class="btn-custom btn-secondary-custom"><i class="fas fa-heart"></i></button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Book Card 2 -->
+            <div class="book-card">
+                <div class="book-cover">
+                    <i class="fas fa-book-open"></i>
+                </div>
+                <div class="book-info">
+                    <h3 class="book-title">Atomic Habits</h3>
+                    <p class="book-author">by James Clear</p>
+                    <div class="book-rating">
+                        <span class="stars">★★★★☆</span>
+                        <span class="rating-text">(4.7)</span>
+                    </div>
+                    <div class="book-genre">
+                        <span class="genre-tag">Self-Help</span>
+                        <span class="genre-tag">Business</span>
+                    </div>
+                    <p class="book-description">Tiny changes, remarkable results. Discover the power of small habits.</p>
+                    <div class="book-actions">
+                        <button class="btn-custom btn-primary-custom">Read Now</button>
+                        <button class="btn-custom btn-secondary-custom"><i class="fas fa-heart"></i></button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Book Card 3 -->
+            <div class="book-card">
+                <div class="book-cover">
+                    <i class="fas fa-book-open"></i>
+                </div>
+                <div class="book-info">
+                    <h3 class="book-title">Project Hail Mary</h3>
+                    <p class="book-author">by Andy Weir</p>
+                    <div class="book-rating">
+                        <span class="stars">★★★★★</span>
+                        <span class="rating-text">(4.9)</span>
+                    </div>
+                    <div class="book-genre">
+                        <span class="genre-tag">Science Fiction</span>
+                        <span class="genre-tag">Adventure</span>
+                    </div>
+                    <p class="book-description">A lone astronaut must save humanity in this thrilling sci-fi adventure.</p>
+                    <div class="book-actions">
+                        <button class="btn-custom btn-primary-custom">Read Now</button>
+                        <button class="btn-custom btn-secondary-custom"><i class="fas fa-heart"></i></button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Book Card 4 -->
+            <div class="book-card">
+                <div class="book-cover">
+                    <i class="fas fa-book-open"></i>
+                </div>
+                <div class="book-info">
+                    <h3 class="book-title">The Thursday Murder Club</h3>
+                    <p class="book-author">by Richard Osman</p>
+                    <div class="book-rating">
+                        <span class="stars">★★★★☆</span>
+                        <span class="rating-text">(4.6)</span>
+                    </div>
+                    <div class="book-genre">
+                        <span class="genre-tag">Mystery</span>
+                        <span class="genre-tag">Comedy</span>
+                    </div>
+                    <p class="book-description">Four unlikely friends solve cold cases in this delightful mystery.</p>
+                    <div class="book-actions">
+                        <button class="btn-custom btn-primary-custom">Read Now</button>
+                        <button class="btn-custom btn-secondary-custom"><i class="fas fa-heart"></i></button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Book Card 5 -->
+            <div class="book-card">
+                <div class="book-cover">
+                    <i class="fas fa-book-open"></i>
+                </div>
+                <div class="book-info">
+                    <h3 class="book-title">Educated</h3>
+                    <p class="book-author">by Tara Westover</p>
+                    <div class="book-rating">
+                        <span class="stars">★★★★★</span>
+                        <span class="rating-text">(4.8)</span>
+                    </div>
+                    <div class="book-genre">
+                        <span class="genre-tag">Biography</span>
+                        <span class="genre-tag">Memoir</span>
+                    </div>
+                    <p class="book-description">A powerful memoir about a woman's journey to education and self-discovery.</p>
+                    <div class="book-actions">
+                        <button class="btn-custom btn-primary-custom">Read Now</button>
+                        <button class="btn-custom btn-secondary-custom"><i class="fas fa-heart"></i></button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Book Card 6 -->
+            <div class="book-card">
+                <div class="book-cover">
+                    <i class="fas fa-book-open"></i>
+                </div>
+                <div class="book-info">
+                    <h3 class="book-title">Dune</h3>
+                    <p class="book-author">by Frank Herbert</p>
+                    <div class="book-rating">
+                        <span class="stars">★★★★☆</span>
+                        <span class="rating-text">(4.7)</span>
+                    </div>
+                    <div class="book-genre">
+                        <span class="genre-tag">Science Fiction</span>
+                        <span class="genre-tag">Fantasy</span>
+                    </div>
+                    <p class="book-description">An epic tale of politics, religion, and survival on a desert planet.</p>
+                    <div class="book-actions">
+                        <button class="btn-custom btn-primary-custom">Read Now</button>
+                        <button class="btn-custom btn-secondary-custom"><i class="fas fa-heart"></i></button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer>
+        <p>&copy; 2025 BookHub. All rights reserved. | Made for book lovers, by book lovers.</p>
+    </footer>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

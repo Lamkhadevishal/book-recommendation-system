@@ -131,6 +131,8 @@
             transition: all 0.3s ease;
             background: #111;
         }
+        
+
         .book-card:hover {
             transform: translateY(-10px);
             box-shadow: 0 15px 35px rgba(255,255,255,0.15);
@@ -138,17 +140,22 @@
         }
         .book-card img {
             width: 100%;
-            height: 380px;
-            object-fit: cover;
+            height: 380px; /* Slightly taller for better visibility */
+            object-fit: contain; /* Shows the full image without cropping */
             object-position: center;
             border-bottom: 2px solid #222;
             filter: brightness(1.1) contrast(1.1);
+            background-color: #111; /* Adds dark padding area around image */
             transition: transform 0.3s ease, filter 0.3s ease;
+            image-rendering: -webkit-optimize-contrast;
+            image-rendering: crisp-edges;
         }
-        .book-card:hover img {
-            transform: scale(1.03);
-            filter: brightness(1.2);
-        }
+
+      .book-card:hover img {
+    transform: scale(1.03);
+    filter: brightness(1.2);
+}
+
 
         .book-card-body {
             padding: 1.5rem;
@@ -240,14 +247,37 @@
     </style>
 </head>
 <body>
-    <!-- Navbar -->
-    <nav class="navbar navbar-expand-lg navbar-dark sticky-top">
-        <div class="container">
-            <a class="navbar-brand" href="#">
-                <i class="fas fa-book"></i> BookHaven
-            </a>
+  <!-- Navbar -->
+<nav class="navbar navbar-expand-lg navbar-dark sticky-top">
+    <div class="container">
+        <a class="navbar-brand" href="#">
+            <i class="fas fa-book"></i> BookHaven
+        </a>
+
+        <!-- Navbar toggler for mobile -->
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+            aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <!-- Navbar links -->
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav ms-auto">
+                <!-- Existing links can go here -->
+                <li class="nav-item">
+                    <a class="nav-link" href="#books">Books</a>
+                </li>
+
+                <!-- Recommend option -->
+                <li class="nav-item">
+                    <a class="nav-link btn btn-outline-warning text-white ms-2" href="recommend.html" 
+                       style="border-radius: 50px;">Recommend</a>
+                </li>
+            </ul>
         </div>
-    </nav>
+    </div>
+</nav>
+
 
     <!-- Hero Section -->
     <section class="hero" id="home">
@@ -261,15 +291,17 @@
         </div>
     </section>
 
-    <!-- Books Section -->
-   <section class="books-section" id="books">
-        <div class="container">
-            <h2 class="section-title">Featured Books</h2>
-            <div class="row g-4">
-                {% for i in range(book_name|length) %}
+ <!-- Books Section -->
+<section class="books-section" id="books">
+    <div class="container">
+        <h2 class="section-title">Featured Books</h2>
+        <div class="row g-4">
+            {% for i in range(book_name|length) %}
+                {% set img = image[i] %}
+                {% if img and img not in ['None', 'none', 'N/A', 'n/a', '', ' '] %}
                 <div class="col-lg-3 col-md-6 col-sm-12">
-                    <div class="book-card">
-                        <img src="{{ image[i] }}" class="card-img-top" alt="Book Cover">
+                    <div class="book-card h-100">
+                        <img src="{{ img }}" class="card-img-top" alt="{{ book_name[i] }}">
                         <div class="book-card-body">
                             <h5 class="book-title">{{ book_name[i] }}</h5>
                             <p class="book-author">By {{ author[i] }}</p>
@@ -288,10 +320,13 @@
                         </div>
                     </div>
                 </div>
-                {% endfor %}
-            </div>
+                {% endif %}
+            {% endfor %}
         </div>
-    </section>
+    </div>
+</section>
+
+
 
     <!-- Footer -->
     <footer>
