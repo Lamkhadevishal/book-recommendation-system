@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BookHaven - Your Digital Library</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+
+    <style>
+        :root {
+            --primary-color: #000000;
+            --secondary-color: #ffc107;
+            --accent-color: #ffb81c;
+            --light-bg: #1a1a1a;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--primary-color);
+            color: #fff;
+        }
+
+        /* Navbar */
+        .navbar {
+            background: linear-gradient(135deg, #000 0%, #222 100%);
+            box-shadow: 0 2px 10px rgba(0,0,0,0.4);
+            padding: 1rem 0;
+        }
+        .navbar-brand {
+            font-weight: 700;
+            font-size: 1.8rem;
+            color: #fff !important;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .navbar-brand i { color: var(--secondary-color); }
+
+        /* Hero */
+        .hero {
+            background: linear-gradient(135deg, #000 0%, #222 100%);
+            color: white;
+            padding: 80px 0;
+            text-align: center;
+            margin-bottom: 60px;
+        }
+        .hero h1 {
+            font-size: 3.5rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            text-shadow: 2px 2px 4px rgba(255,255,255,0.2);
+        }
+        .hero p { 
+            font-size: 1.3rem; 
+            margin-bottom: 2rem;
+            color: var(--secondary-color);
+        }
+        .search-box {
+            max-width: 600px;
+            margin: 0 auto;
+            position: relative;
+        }
+        .search-box input {
+            border-radius: 50px;
+            padding: 12px 25px;
+            border: 2px solid var(--secondary-color);
+            width: 100%;
+            background-color: #111;
+            color: #fff;
+            box-shadow: 0 4px 15px rgba(255,193,7,0.2);
+        }
+        .search-box input:focus {
+            border-color: var(--secondary-color);
+            box-shadow: 0 4px 15px rgba(255,193,7,0.3);
+            outline: none;
+        }
+        .search-box button {
+            position: absolute;
+            right: 10px;
+            top: 6px;
+            background-color: var(--secondary-color);
+            border: none;
+            border-radius: 50%;
+            width: 45px;
+            height: 45px;
+            color: #000;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .search-box button:hover {
+            background-color: var(--accent-color);
+            transform: scale(1.1);
+        }
+
+        /* Books Section */
+        .books-section { 
+            padding: 60px 0;
+        }
+        .section-title {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--secondary-color);
+            margin-bottom: 3rem;
+            text-align: center;
+            position: relative;
+            padding-bottom: 1.5rem;
+        }
+        .section-title::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 80px;
+            height: 4px;
+            background: var(--secondary-color);
+            border-radius: 2px;
+        }
+
+        /* Book Card */
+        .book-card {
+            border: 2px solid #333;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(255,255,255,0.08);
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            transition: all 0.3s ease;
+            background: #111;
+        }
+        .book-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 35px rgba(255,255,255,0.15);
+            border-color: var(--secondary-color);
+        }
+        .book-card img {
+            width: 100%;
+            height: 380px;
+            object-fit: cover;
+            object-position: center;
+            border-bottom: 2px solid #222;
+            filter: brightness(1.1) contrast(1.1);
+            transition: transform 0.3s ease, filter 0.3s ease;
+        }
+        .book-card:hover img {
+            transform: scale(1.03);
+            filter: brightness(1.2);
+        }
+
+        .book-card-body {
+            padding: 1.5rem;
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+        }
+        .book-title {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: #fff;
+            margin-bottom: 0.5rem;
+            line-height: 1.4;
+        }
+        .book-author {
+            color: #ccc;
+            font-style: italic;
+            font-size: 0.95rem;
+            margin-bottom: 0.8rem;
+        }
+        .book-rating {
+            color: var(--secondary-color);
+            font-size: 0.9rem;
+            margin-bottom: 0.3rem;
+            font-weight: 600;
+        }
+        .book-votes {
+            color: #aaa;
+            font-size: 0.85rem;
+            margin-bottom: 1rem;
+        }
+        .btn-primary-custom {
+            background: var(--secondary-color);
+            border: none;
+            border-radius: 50px;
+            padding: 10px 20px;
+            font-weight: 600;
+            color: #000;
+            transition: all 0.3s ease;
+        }
+        .btn-primary-custom:hover {
+            transform: scale(1.05);
+            box-shadow: 0 5px 15px rgba(255,255,255,0.3);
+            background: var(--accent-color);
+        }
+        .btn-wishlist {
+            border: 2px solid var(--secondary-color);
+            color: var(--secondary-color);
+            background: transparent;
+            border-radius: 50px;
+            padding: 8px 18px;
+            font-weight: 600;
+            margin-left: 0.5rem;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+        .btn-wishlist:hover {
+            background: var(--secondary-color);
+            color: #000;
+        }
+        .btn-group-custom {
+            display: flex;
+            gap: 0.5rem;
+            justify-content: space-between;
+        }
+
+        /* Footer */
+        footer {
+            background: #000;
+            color: white;
+            padding: 3rem 0 1rem;
+            margin-top: 60px;
+        }
+        footer p {
+            margin: 0;
+        }
+
+        @media (max-width: 768px) {
+            .hero h1 {
+                font-size: 2rem;
+            }
+            .section-title {
+                font-size: 1.8rem;
+            }
+            .book-card img {
+                height: 300px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-dark sticky-top">
+        <div class="container">
+            <a class="navbar-brand" href="#">
+                <i class="fas fa-book"></i> BookHaven
+            </a>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero" id="home">
+        <div class="container">
+            <h1><i class="fas fa-book-open"></i> Welcome to BookHaven</h1>
+            <p>Discover your next favorite book from our vast collection</p>
+            <div class="search-box">
+                <input type="text" class="form-control" placeholder="Search books by title or author...">
+                <button class="btn"><i class="fas fa-search"></i></button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Books Section -->
+   <section class="books-section" id="books">
+        <div class="container">
+            <h2 class="section-title">Featured Books</h2>
+            <div class="row g-4">
+                {% for i in range(book_name|length) %}
+                <div class="col-lg-3 col-md-6 col-sm-12">
+                    <div class="book-card">
+                        <img src="{{ image[i] }}" class="card-img-top" alt="Book Cover">
+                        <div class="book-card-body">
+                            <h5 class="book-title">{{ book_name[i] }}</h5>
+                            <p class="book-author">By {{ author[i] }}</p>
+                            <p class="book-rating">
+                                <i class="fas fa-star"></i> {{ rating[i] }}
+                            </p>
+                            <p class="book-votes">Votes: {{ Votes[i] }}</p>
+                            <div class="btn-group-custom d-flex justify-content-between">
+                                <button class="btn btn-primary-custom flex-grow-1">
+                                    <i class="fas fa-book-reader"></i> Read
+                                </button>
+                                <button class="btn btn-wishlist">
+                                    <i class="fas fa-heart"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container text-center">
+            <p>&copy; 2025 BookHaven. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
